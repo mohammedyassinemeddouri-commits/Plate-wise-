@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PlateWise</title>
+<style>
+:root{--bg:#fbfbf9;--card:#fff;--text:#1b221e;--muted:#68726c;--border:#e3e7e1;--accent:#2f7d4f;--accent2:#58b57d;--accent-t:#fff;--soft:#eaf4ee;--no:#c0392b;--glow:rgba(47,125,79,.2);--shadow:0 10px 30px rgba(30,60,40,.12);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d120f;--card:#161e19;--text:#eaf0eb;--muted:#9aa89f;--border:#27322b;--accent:#5fbf84;--accent2:#8be0ab;--accent-t:#0d1a11;--soft:#1b2a21;--no:#ef7b6d;--glow:rgba(95,191,132,.22);--shadow:0 10px 30px rgba(0,0,0,.45);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d120f;--card:#161e19;--text:#eaf0eb;--muted:#9aa89f;--border:#27322b;--accent:#5fbf84;--accent2:#8be0ab;--accent-t:#0d1a11;--soft:#1b2a21;--no:#ef7b6d;--glow:rgba(95,191,132,.22);--shadow:0 10px 30px rgba(0,0,0,.45);color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;transition:background .35s,color .35s}
+header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:14px 16px;max-width:980px;margin:0 auto}
+.logo{font-weight:800;font-size:1.45rem;letter-spacing:-.03em;text-align:center}
+.logo span{color:var(--accent)}
+.hr{justify-self:end;display:flex;gap:8px}
+.hb{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:12px;padding:8px 12px;cursor:pointer;font:inherit;display:inline-flex;align-items:center;gap:6px;transition:transform .15s,box-shadow .2s,border-color .2s}
+.hb:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--accent)}
+.hb:active{transform:scale(.95)}
+#tt{justify-self:start;padding:8px 11px}
+main{max-width:980px;margin:0 auto;padding:0 16px 56px;position:relative;z-index:0}
+.hero{text-align:center;padding:48px 0 32px;position:relative}
+.hero::before{content:"";position:absolute;inset:-20px -10px auto;height:360px;background:radial-gradient(ellipse at 50% 0,var(--glow),transparent 70%);z-index:-1}
+.food{display:flex;justify-content:center;gap:14px;font-size:2rem;margin-bottom:14px}
+.food span{animation:float 3.2s ease-in-out infinite}
+.food span:nth-child(2){animation-delay:.4s}.food span:nth-child(3){animation-delay:.8s}.food span:nth-child(4){animation-delay:1.2s}
+@keyframes float{50%{transform:translateY(-9px)}}
+.hero h1{font-size:clamp(2rem,6.5vw,3.3rem);line-height:1.08;margin:0 0 14px;letter-spacing:-.035em}
+.grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:520px;margin:0 auto 24px;font-size:1.08rem}
+.cta{display:flex;flex-direction:column;align-items:center;gap:10px}
+.link{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;text-decoration:underline}
+.link:hover{color:var(--accent)}
+.btn{position:relative;overflow:hidden;display:inline-block;border:0;border-radius:14px;padding:13px 26px;font:600 1rem inherit;font-family:inherit;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--accent-t);text-decoration:none;text-align:center;transition:transform .18s,box-shadow .25s}
+.btn::after{content:"";position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .6s}
+.btn:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.btn:hover::after{left:130%}
+.btn:active{transform:scale(.96)}
+.btn.alt{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn.alt:hover{border-color:var(--accent)}
+.btn.big{padding:16px 38px;font-size:1.1rem;animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--glow)}70%{box-shadow:0 0 0 16px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.btn.wide{width:100%}
+h2{font-size:1.5rem;text-align:center;margin:52px 0 6px;letter-spacing:-.02em}
+.lead{text-align:center;color:var(--muted);margin:0 0 22px}
+.lines{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;transition:transform .25s,box-shadow .25s,border-color .25s}
+.lines .card:hover,.plan:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:var(--accent)}
+.card h3{margin:0 0 4px;font-size:1.05rem}.card p{margin:0;color:var(--muted);font-size:.93rem}
+.ico{font-size:1.7rem;margin-bottom:8px;width:48px;height:48px;border-radius:14px;background:var(--soft);display:grid;place-items:center}
+.cmp{width:100%;border-collapse:collapse}
+.cmp th,.cmp td{padding:13px 10px;border-bottom:1px solid var(--border);text-align:center}
+.cmp tr:last-child td{border-bottom:0}
+.cmp th:first-child,.cmp td:first-child{text-align:left}
+.cmp th.us{color:var(--accent)}
+.cmp tbody tr{transition:background .2s}.cmp tbody tr:hover{background:var(--soft)}
+.yes{color:var(--accent);font-weight:800;font-size:1.25rem}.no{color:var(--no);font-weight:800;font-size:1.25rem}
+.box{overflow-x:auto;padding:6px 14px}
+.plans{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));margin-top:22px}
+.plan{display:flex;flex-direction:column;gap:10px}
+.plan.pro{border:2px solid var(--accent)}
+.price{font-size:2.1rem;font-weight:800}.price small{font-size:.9rem;font-weight:500;color:var(--muted)}
+.plan ul{list-style:none;padding:0;margin:0;flex:1}
+.plan li{padding:4px 0}.plan li::before{content:"✓ ";color:var(--accent);font-weight:800}
+.badge{align-self:flex-start;background:var(--soft);color:var(--accent);padding:3px 11px;border-radius:99px;font-size:.8rem;font-weight:700}
+.fine{font-size:.82rem;color:var(--muted);text-align:center}
+.why{margin:0;padding:0;list-style:none}.why li{padding:9px 0;border-bottom:1px solid var(--border)}.why li:last-child{border:0}
+.view[hidden]{display:none}
+.view>*{animation:up .55s both}.view>*:nth-child(2){animation-delay:.08s}.view>*:nth-child(3){animation-delay:.16s}.view>*:nth-child(4){animation-delay:.24s}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20;animation:fade .2s}
+.scrim[hidden]{display:none}
+@keyframes fade{from{opacity:0}}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:390px;max-height:90vh;overflow:auto;animation:pop .28s}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(10px)}}
+.modal h3{margin:0 0 12px}
+label{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 4px}
+input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:inherit;transition:border-color .2s,box-shadow .2s}
+input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.seg{display:flex;gap:6px}.seg button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font:inherit;transition:transform .15s,background .2s}
+.seg button:hover{transform:translateY(-2px)}.seg button:active{transform:scale(.95)}
+.seg button.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent)}
+.row{display:grid;gap:8px;margin-top:14px}
+.err{color:var(--no);font-size:.85rem;min-height:1.2em;margin-top:8px}
+.center{text-align:center;padding:60px 0}
+@media(max-width:520px){.hb .t{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<header>
+  <button class="hb" id="tt" aria-label="Switch light or dark">🌙</button>
+  <div class="logo">Plate<span>Wise</span></div>
+  <div class="hr">
+    <button class="hb" id="lg">👤 <span class="t" id="lgT">Log in</span></button>
+    <button class="hb" id="gear" aria-label="Settings">⚙ <span class="t">Settings</span></button>
+  </div>
+</header>
+
+<main>
+<section class="view" id="v-landing">
+  <div class="hero">
+    <div class="food"><span>🍅</span><span>🥑</span><span>🍳</span><span>🥗</span></div>
+    <h1>Your week of meals,<br><span class="grad">planned in seconds.</span></h1>
+    <p>Enter your diet and budget. Get a full week of meals and a grocery list you can shop from.</p>
+    <div class="cta">
+      <button class="btn big" onclick="openAuth('signup')">Get started free</button>
+      <div class="fine">Free plan, no card needed</div>
+      <button class="link" onclick="openAuth('login')">I already have an account</button>
+    </div>
+  </div>
+
+  <h2>Why choose PlateWise?</h2>
+  <p class="lead">One job, done well: feed you without overspending.</p>
+  <div class="lines">
+    <div class="card"><div class="ico">💸</div><h3>Stays in your budget</h3><p>Set what you can spend per week. Meals are picked to fit.</p></div>
+    <div class="card"><div class="ico">🛒</div><h3>Grocery list ready</h3><p>Everything you need, grouped by section, with tick boxes.</p></div>
+    <div class="card"><div class="ico">🥦</div><h3>Fits how you eat</h3><p>Vegetarian, vegan or high protein. Allergies are left out.</p></div>
+    <div class="card"><div class="ico">👆</div><h3>No typing needed</h3><p>Fill a short form, press one button. Swap any meal in a tap.</p></div>
+  </div>
+
+  <h2>PlateWise vs ChatGPT</h2>
+  <p class="lead">ChatGPT can plan meals too, if you write the right prompt every time. Here’s what you skip.</p>
+  <div class="card box">
+    <table class="cmp">
+      <thead><tr><th></th><th class="us">PlateWise</th><th>ChatGPT</th></tr></thead>
+      <tbody>
+        <tr><td>Weekly plan without writing a prompt</td><td class="yes">✓</td><td class="no">✕</td></tr>
+        <tr><td>Tick-off grocery list on the same screen</td><td class="yes">✓</td><td class="no">✕</td></tr>
+        <tr><td>Swap one meal in a single tap</td><td class="yes">✓</td><td class="no">✕</td></tr>
+        <tr><td>Budget and allergies applied automatically</td><td class="yes">✓</td><td class="no">✕</td></tr>
+        <tr><td>Answers any question</td><td class="no">✕</td><td class="yes">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="view" id="v-plans" hidden>
+  <h2 id="hello" style="margin-top:36px">Choose your plan</h2>
+  <p class="lead">Start free. Upgrade only if you want more.</p>
+  <div class="plans">
+    <div class="card plan">
+      <h3>Free</h3>
+      <div class="price">$0 <small>forever</small></div>
+      <ul><li>Weekly meal plan</li><li>Diet and allergy filters</li><li>Grocery list</li><li>Swap meals</li></ul>
+      <button class="btn alt wide" onclick="choose('Free')">Continue with Free</button>
+    </div>
+    <div class="card plan pro">
+      <span class="badge">7-day free trial</span>
+      <h3>Pro</h3>
+      <div class="price">$4.99 <small>/ month</small></div>
+      <ul><li>Everything in Free</li><li>Save your plans</li><li>Pantry: skip what you own</li><li>Share list with family</li><li>Calories per meal</li></ul>
+      <button class="btn wide" onclick="choose('Pro (7-day trial)')">Start 7-day free trial</button>
+      <div class="fine">10-day money-back guarantee. Cancel anytime.</div>
+    </div>
+  </div>
+
+  <h2>Why choose Pro?</h2>
+  <div class="card"><ul class="why">
+    <li><b>Don’t start over each week.</b> Save plans you liked and reuse them.</li>
+    <li><b>Buy less you don’t need.</b> Tell us what’s in your kitchen and it leaves those items off the list.</li>
+    <li><b>Shop as a team.</b> You and your family tick off the same list.</li>
+    <li><b>Know what you eat.</b> See calories for every meal.</li>
+    <li><b>Easy to try.</b> 7 days free, then 10 days to get your money back.</li>
+  </ul></div>
+</section>
+
+<section class="view center" id="v-done" hidden>
+  <div style="font-size:3.2rem">🎉</div>
+  <h2 style="margin-top:8px">You’re in!</h2>
+  <p class="lead" id="doneP"></p>
+  <a class="btn big" href="planner.html">Open the meal planner</a>
+</section>
+</main>
+
+<div class="scrim" id="settings" hidden>
+  <div class="modal">
+    <h3>Settings</h3>
+    <label>Background</label>
+    <div class="seg" id="seg"><button data-t="system">System</button><button data-t="light">White</button><button data-t="dark">Black</button></div>
+    <div class="row" id="acct"></div>
+    <div class="row"><button class="btn alt" onclick="closeAll()">Close</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="auth" hidden>
+  <div class="modal">
+    <h3 id="authT">Log in</h3>
+    <form id="f" novalidate>
+      <div id="nameRow"><label for="name">Name</label><input id="name" autocomplete="name"></div>
+      <label for="email">Email</label><input id="email" type="email" autocomplete="email">
+      <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+      <div class="err" id="err"></div>
+      <div class="row"><button class="btn wide" type="submit" id="authB">Log in</button>
+      <button class="btn alt wide" type="button" id="sw"></button>
+      <button class="btn alt wide" type="button" onclick="closeAll()">Cancel</button></div>
+    </form>
+    <p class="fine" style="margin-top:12px">Demo only: no real account is created yet.</p>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let user=null,mode="login",theme="system";
+const dark=()=>theme==="dark"||(theme==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);
+function show(v){document.querySelectorAll(".view").forEach(s=>s.hidden=s.id!=="v-"+v);window.scrollTo(0,0)}
+function closeAll(){$("settings").hidden=true;$("auth").hidden=true}
+function setTheme(t){
+  theme=t;
+  if(t==="system")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",t);
+  document.querySelectorAll("#seg button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  $("tt").textContent=dark()?"☀️":"🌙";
+  try{localStorage.setItem("pw-theme",t)}catch(e){}
+}
+function hdr(){$("lgT").textContent=user?user.name:"Log in"}
+function openSettings(){
+  $("acct").innerHTML=user
+    ?`<div class="fine">Signed in as ${user.name}</div><button class="btn alt" onclick="logout()">Log out</button>`
+    :`<button class="btn" onclick="openAuth('login')">Log in</button><button class="btn alt" onclick="openAuth('signup')">Sign up</button>`;
+  $("settings").hidden=false;
+}
+function openAuth(m){
+  mode=m;closeAll();
+  const s=m==="signup";
+  $("authT").textContent=s?"Create your account":"Log in";
+  $("authB").textContent=s?"Sign up":"Log in";
+  $("nameRow").hidden=!s;
+  $("sw").textContent=s?"I already have an account":"Create a new account";
+  $("sw").onclick=()=>openAuth(s?"login":"signup");
+  $("pw").autocomplete=s?"new-password":"current-password";
+  $("err").textContent="";$("auth").hidden=false;
+}
+$("f").addEventListener("submit",e=>{
+  e.preventDefault();
+  const email=$("email").value.trim(),pw=$("pw").value,name=$("name").value.trim();
+  if(!/^\S+@\S+\.\S+$/.test(email))return $("err").textContent="Enter a valid email.";
+  if(pw.length<6)return $("err").textContent="Password needs at least 6 characters.";
+  if(mode==="signup"&&!name)return $("err").textContent="Enter your name.";
+  user={name:mode==="signup"?name:email.split("@")[0],email};
+  $("pw").value="";closeAll();hdr();
+  $("hello").textContent="Welcome, "+user.name+"! Choose your plan";
+  show("plans");
+});
+function choose(p){
+  $("doneP").textContent="You picked "+p+". "+(p==="Free"?"You can upgrade to Pro anytime.":"No charge for 7 days, plus a 10-day money-back guarantee.");
+  show("done");
+}
+function logout(){user=null;closeAll();hdr();show("landing")}
+$("gear").onclick=openSettings;
+$("lg").onclick=()=>user?openSettings():openAuth("login");
+$("tt").onclick=()=>setTheme(dark()?"light":"dark");
+$("seg").onclick=e=>{if(e.target.dataset.t)setTheme(e.target.dataset.t)};
+document.querySelectorAll(".scrim").forEach(s=>s.addEventListener("click",e=>{if(e.target===s)closeAll()}));
+let t="system";try{t=localStorage.getItem("pw-theme")||"system"}catch(e){}
+setTheme(t);
+</script>
+</body></html>

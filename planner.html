@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PlateWise Planner</title>
+<style>
+:root{--bg:#fbfbf9;--card:#fff;--text:#1b221e;--muted:#68726c;--border:#e3e7e1;--accent:#2f7d4f;--accent2:#58b57d;--accent-t:#fff;--soft:#eaf4ee;--warn:#b3541e;--glow:rgba(47,125,79,.22);--shadow:0 10px 30px rgba(30,60,40,.13);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d120f;--card:#161e19;--text:#eaf0eb;--muted:#9aa89f;--border:#27322b;--accent:#5fbf84;--accent2:#8be0ab;--accent-t:#0d1a11;--soft:#1b2a21;--warn:#e8925a;--glow:rgba(95,191,132,.25);--shadow:0 10px 30px rgba(0,0,0,.45);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d120f;--card:#161e19;--text:#eaf0eb;--muted:#9aa89f;--border:#27322b;--accent:#5fbf84;--accent2:#8be0ab;--accent-t:#0d1a11;--soft:#1b2a21;--warn:#e8925a;--glow:rgba(95,191,132,.25);--shadow:0 10px 30px rgba(0,0,0,.45);color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;transition:background .35s,color .35s}
+header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:14px 16px;max-width:980px;margin:0 auto}
+.logo{font-weight:800;font-size:1.35rem;letter-spacing:-.03em;text-align:center}.logo span{color:var(--accent)}
+.hb{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:12px;padding:8px 12px;cursor:pointer;font:inherit;text-decoration:none;display:inline-flex;gap:6px;transition:transform .15s,box-shadow .2s,border-color .2s}
+.hb:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--accent)}.hb:active{transform:scale(.95)}
+#gear{justify-self:end}
+main{max-width:980px;margin:0 auto;padding:0 16px 56px;position:relative;z-index:0}
+.hero{text-align:center;padding:30px 0 12px;position:relative}
+.hero::before{content:"";position:absolute;inset:-30px -10px auto;height:300px;background:radial-gradient(ellipse at 50% 0,var(--glow),transparent 70%);z-index:-1}
+.hero h1{font-size:clamp(1.8rem,5.5vw,2.8rem);line-height:1.1;margin:0 0 8px;letter-spacing:-.03em}
+.grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);margin:0}
+.step{margin-top:26px;animation:up .55s both}
+.step:nth-of-type(2){animation-delay:.07s}.step:nth-of-type(3){animation-delay:.14s}.step:nth-of-type(4){animation-delay:.21s}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.step h2{font-size:1.1rem;margin:0 0 10px;display:flex;align-items:center;gap:10px}
+.num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--accent-t);display:grid;place-items:center;font-size:.85rem;font-weight:800}
+.tiles{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.tile{text-align:left;background:var(--card);color:var(--text);border:1.5px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:2px;transition:transform .2s,box-shadow .25s,border-color .2s}
+.tile span{font-size:1.7rem}.tile small{color:var(--muted)}
+.tile:hover{transform:translateY(-4px);box-shadow:var(--shadow)}.tile:active{transform:scale(.97)}
+.tile.on{border-color:var(--accent);background:var(--soft);box-shadow:0 0 0 3px var(--glow),0 12px 30px var(--glow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid var(--border);border-radius:999px;background:var(--card);cursor:pointer;transition:transform .15s,background .2s,border-color .2s}
+.chip:hover{transform:translateY(-2px);border-color:var(--accent)}
+.chip input{display:none}
+.chip:has(input:checked){background:var(--accent);color:var(--accent-t);border-color:var(--accent);box-shadow:0 6px 18px var(--glow)}
+.chip.fav{background:var(--soft);border-color:var(--accent);animation:pop .25s}
+.chip.sug{border-style:dashed;color:var(--muted)}
+.chip button{border:0;background:none;color:inherit;cursor:pointer;font:inherit;padding:0}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+.addrow{display:flex;gap:8px;margin-bottom:10px}
+input.t,select{width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font:inherit;transition:border-color .2s,box-shadow .2s}
+input.t:focus,select:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.panel{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));padding:18px;border-radius:20px;background:linear-gradient(135deg,var(--soft),var(--card));border:1.5px solid var(--border)}
+.panel label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:5px}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:1.2rem;cursor:pointer;transition:transform .15s,border-color .2s}
+.stepper button:hover{border-color:var(--accent);transform:translateY(-2px)}.stepper button:active{transform:scale(.9)}
+.stepper b{min-width:28px;text-align:center;font-size:1.2rem}
+.btn{position:relative;overflow:hidden;border:0;border-radius:16px;padding:15px 30px;font:700 1.1rem inherit;font-family:inherit;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--accent-t);transition:transform .18s,box-shadow .25s}
+.btn::after{content:"";position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .6s}
+.btn:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.btn:hover::after{left:130%}.btn:active{transform:scale(.97)}
+.btn.alt{background:var(--card);color:var(--text);border:1.5px solid var(--border);padding:11px 20px;font-size:1rem}
+.go{display:block;margin:28px auto 0;animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--glow)}70%{box-shadow:0 0 0 18px transparent}100%{box-shadow:0 0 0 0 transparent}}
+#out h2.t{font-size:1.5rem;margin:44px 0 12px;text-align:center}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px;animation:up .5s both}
+.bar{height:12px;border-radius:99px;background:var(--border);overflow:hidden;margin:10px 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transform-origin:left;animation:grow 1s}
+.bar.over i{background:var(--warn)}
+@keyframes grow{from{transform:scaleX(0)}}
+.warn{color:var(--warn)}.note{font-size:.82rem;color:var(--muted);margin:8px 0 0}
+.days{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));margin-top:14px}
+.day{position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s}
+.day::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.day:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--glow);border-color:var(--accent)}
+.day h3{margin:4px 0 6px;display:flex;justify-content:space-between;font-size:1.02rem}.day h3 small{color:var(--muted);font-weight:500}
+.meal{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--border)}
+.meal .e{font-size:1.3rem}.meal div{flex:1}.meal small{display:block;color:var(--muted);font-size:.75rem}.meal b{font-weight:600}
+.swap{border:1.5px solid var(--border);background:transparent;color:var(--text);border-radius:10px;width:34px;height:34px;cursor:pointer;transition:transform .35s,border-color .2s}
+.swap:hover{transform:rotate(180deg);border-color:var(--accent)}
+.glist{columns:2 250px;column-gap:24px}
+.cat{break-inside:avoid;margin-bottom:14px}.cat h3{margin:0 0 6px;font-size:.95rem;color:var(--accent)}
+.item{display:flex;gap:10px;padding:5px 0;align-items:center;cursor:pointer}
+.item input{accent-color:var(--accent);width:18px;height:18px}
+.item input:checked+span{text-decoration:line-through;color:var(--muted)}
+[hidden],.scrim[hidden]{display:none!important}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:380px;animation:pop .28s}
+.modal h3{margin:0 0 12px}
+.seg{display:flex;gap:6px}.seg button{flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font:inherit;transition:transform .15s,background .2s}
+.seg button:hover{transform:translateY(-2px)}.seg button.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent);box-shadow:0 6px 18px var(--glow)}
+@media(max-width:520px){.hb .t{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<header>
+  <a class="hb" href="index.html" style="justify-self:start">← <span class="t">Home</span></a>
+  <div class="logo">Plate<span>Wise</span></div>
+  <button class="hb" id="gear">⚙ <span class="t">Settings</span></button>
+</header>
+
+<main>
+<div class="hero"><h1>Build your <span class="grad">perfect week</span></h1><p>Pick how you eat, tell us what you love, and we’ll do the rest.</p></div>
+
+<section class="step"><h2><span class="num">1</span>How do you eat?</h2><div class="tiles" id="tiles"></div></section>
+
+<section class="step"><h2><span class="num">2</span>Any allergies?</h2>
+  <div class="chips" id="al">
+    <label class="chip"><input type="checkbox" value="gluten">🌾 Gluten</label>
+    <label class="chip"><input type="checkbox" value="dairy">🥛 Dairy</label>
+    <label class="chip"><input type="checkbox" value="eggs">🥚 Eggs</label>
+    <label class="chip"><input type="checkbox" value="nuts">🥜 Nuts</label>
+    <label class="chip"><input type="checkbox" value="fish">🐟 Fish</label>
+  </div></section>
+
+<section class="step"><h2><span class="num">3</span>Your favourite foods</h2>
+  <div class="addrow"><input class="t" id="favIn" placeholder="Type a food and press Enter (e.g. chicken)"><button class="btn alt" id="favAdd">Add</button></div>
+  <div class="chips" id="favs"></div>
+  <div class="chips" id="sugs" style="margin-top:8px"></div></section>
+
+<section class="step"><h2><span class="num">4</span>People and budget</h2>
+  <div class="panel">
+    <div><label>People eating</label><div class="stepper"><button id="pm">−</button><b id="pc">2</b><button id="pp">+</button></div></div>
+    <div><label for="budget">Weekly budget</label><input class="t" id="budget" type="number" min="1" value="60"></div>
+    <div><label for="cur">Currency</label><select id="cur"><option>USD</option><option>EUR</option><option selected>TND</option></select></div>
+  </div></section>
+
+<div style="text-align:center;margin-top:14px"><button class="btn alt" id="prBtn">💰 Edit ingredient prices</button></div>
+<button class="btn go" id="gen">✨ Generate my week</button>
+
+<div id="out" hidden>
+  <h2 class="t">Your week</h2>
+  <div class="card" id="sum"></div>
+  <div class="days" id="days"></div>
+  <h2 class="t">🛒 Grocery list</h2>
+  <div class="card"><div class="glist" id="groc"></div></div>
+  <p class="note" style="text-align:center">Costs are rough estimates and differ by store and region. Tap ↻ on any meal to swap it.</p>
+</div>
+</main>
+
+<div class="scrim" id="prices" hidden><div class="modal" style="max-width:440px"><h3>Ingredient prices</h3><p class="note" style="margin:0 0 10px">Prices in TND per kg, per litre, or each. Change them to match your market.</p><div id="prList" style="max-height:50vh;overflow:auto"></div><button class="btn alt" style="width:100%;margin-top:14px" onclick="$('prices').hidden=true">Done</button></div></div>
+<div class="scrim" id="settings" hidden>
+  <div class="modal">
+    <h3>Settings</h3>
+    <label style="font-size:.85rem;color:var(--muted);display:block;margin-bottom:6px">Background</label>
+    <div class="seg" id="seg"><button data-t="light">⚪ White</button><button data-t="dark">⚫ Black</button><button data-t="system">System</button></div>
+    <button class="btn alt" style="width:100%;margin-top:16px" onclick="$('settings').hidden=true">Close</button>
+  </div>
+</div>
+
+<script>
+const RAW=`B|Oatmeal with banana & peanut butter|xvp|gluten,nuts|0.9|oats:50:g:K;banana:1:pcs:P;peanut butter:15:g:K
+B|Scrambled eggs on toast|xp|eggs,gluten|1.2|eggs:2:pcs:D;bread:2:slices:K;tomato:1:pcs:P;olive oil:5:ml:K
+B|Greek yogurt, fruit & almonds|xpa|dairy,nuts|1.5|Greek yogurt:200:g:D;apple:1:pcs:P;almonds:20:g:K
+B|Tofu scramble wrap|xvp|gluten|1.6|tofu:120:g:R;tortilla:1:pcs:K;spinach:30:g:P
+B|Chia pudding with berries|xvp||1.8|chia seeds:30:g:K;soy milk:200:ml:K;berries:80:g:P
+B|Avocado toast with egg|xp|eggs,gluten|2.0|avocado:0.5:pcs:P;eggs:2:pcs:D;bread:2:slices:K
+B|Bacon & eggs|xca|eggs|2.2|bacon:80:g:R;eggs:3:pcs:D
+B|Eggs with honey & berries|xa|eggs|1.8|eggs:3:pcs:D;honey:15:g:K;berries:80:g:P
+B|Yogurt with honey & fruit|xa|dairy|1.9|Greek yogurt:200:g:D;honey:15:g:K;berries:80:g:P
+B|Raw egg & milk shake|r|eggs,dairy|1.4|eggs:3:pcs:D;raw milk:200:ml:D
+L|Chickpea & veggie salad|xvp||1.8|chickpeas:150:g:K;cucumber:0.5:pcs:P;tomato:1:pcs:P;olive oil:10:ml:K;lemon:0.25:pcs:P
+L|Chicken rice bowl|x||2.6|chicken breast:150:g:R;rice:80:g:K;broccoli:100:g:P;olive oil:5:ml:K
+L|Tuna & white bean salad|x|fish|2.2|tuna:100:g:R;white beans:100:g:K;tomato:1:pcs:P;olive oil:10:ml:K
+L|Lentil soup with bread|xvp|gluten|1.2|lentils:80:g:K;carrot:1:pcs:P;onion:0.5:pcs:P;bread:1:slices:K
+L|Veggie omelette & salad|xp|eggs|1.6|eggs:3:pcs:D;bell pepper:0.5:pcs:P;tomato:1:pcs:P;lettuce:40:g:P
+L|Turkey & hummus wrap|x|gluten|2.8|turkey slices:100:g:R;tortilla:1:pcs:K;hummus:40:g:K;lettuce:40:g:P
+L|Pasta with tomato & veg|xvp|gluten|1.3|pasta:90:g:K;tomato:2:pcs:P;zucchini:0.5:pcs:P;olive oil:5:ml:K
+D|Baked chicken with potatoes|x||2.9|chicken breast:180:g:R;potatoes:250:g:P;carrot:1:pcs:P;olive oil:10:ml:K
+D|Beef stir-fry with rice|x||3.6|beef strips:150:g:R;rice:80:g:K;bell pepper:1:pcs:P;soy sauce:15:ml:K
+D|Chickpea & spinach curry|xvp||1.9|chickpeas:150:g:K;coconut milk:100:ml:K;rice:80:g:K;spinach:50:g:P;onion:0.5:pcs:P
+D|Baked salmon with veggies|x|fish|4.5|salmon:150:g:R;broccoli:150:g:P;potatoes:150:g:P;lemon:0.25:pcs:P
+D|Tofu & broccoli stir-fry|xvp||2.2|tofu:150:g:R;rice:80:g:K;broccoli:100:g:P;soy sauce:15:ml:K
+D|Spaghetti bolognese|x|gluten|2.6|pasta:90:g:K;ground beef:120:g:R;tomato:2:pcs:P;onion:0.5:pcs:P
+D|Shakshuka with bread|xp|eggs,gluten|1.9|eggs:2:pcs:D;tomato:3:pcs:P;bell pepper:1:pcs:P;onion:0.5:pcs:P;bread:2:slices:K
+BLD|Ribeye steak & fried eggs|xca|eggs,dairy|4.5|ribeye steak:200:g:R;eggs:2:pcs:D;butter:10:g:D
+BLD|Beef patties with butter|xca|dairy|3.2|ground beef:200:g:R;butter:15:g:D
+LD|Pan-seared salmon in butter|xca|fish,dairy|4.2|salmon:170:g:R;butter:15:g:D
+LD|Roast chicken thighs|xca|dairy|2.4|chicken thighs:250:g:R;butter:10:g:D
+LD|Lamb chops|xca||5.0|lamb chops:220:g:R
+LD|Beef & rice bowl with orange|xa||2.8|ground beef:150:g:R;rice:80:g:K;orange:1:pcs:P
+LD|Steak with sweet potato|xa|dairy|4.0|steak:180:g:R;sweet potato:200:g:P;butter:10:g:D
+BLD|Steak tartare with egg yolk|r|eggs|4.2|raw beef:150:g:R;egg yolks:2:pcs:D
+LD|Salmon sashimi|r|fish|4.8|sushi-grade salmon:150:g:R
+LD|Beef carpaccio|r||4.4|raw beef sirloin:150:g:R
+B|Boiled eggs with butter|xca|eggs,dairy|1|eggs:4:pcs:D;butter:10:g:D
+LD|Grilled sardines|xca|fish|2|sardines:250:g:R
+LD|Sardines with salad & bread|x|fish,gluten|2|sardines:250:g:R;tomato:1:pcs:P;cucumber:0.5:pcs:P;lemon:0.5:pcs:P;bread:2:slices:K`;
+const DIETS=[["x","🍽️","No restrictions","Eat anything"],["p","🥕","Vegetarian","No meat or fish"],["v","🌱","Vegan","Plants only"],["c","🥩","Carnivore","Meat, fish, eggs"],["r","🍣","Raw carnivore","Uncooked animal foods"],["a","🍯","Animal-based","Meat, dairy, fruit, honey"]];
+const CATS={P:"🥬 Produce",R:"🥩 Protein",D:"🥚 Dairy & eggs",K:"🫙 Pantry"};
+const FX={TND:1,USD:.32,EUR:.3};
+const PR={oats:8,banana:.7,"peanut butter":22,eggs:.25,bread:.12,tomato:.3,"olive oil":20,"Greek yogurt":9,apple:.8,almonds:45,tofu:22,tortilla:.6,spinach:4,"chia seeds":40,"soy milk":6,berries:30,avocado:3,bacon:38,honey:35,"raw milk":2.5,chickpeas:5,cucumber:.5,lemon:.3,"chicken breast":17,rice:3.5,broccoli:6,tuna:28,"white beans":6,lentils:5,carrot:.25,onion:.2,"bell pepper":.5,lettuce:5,"turkey slices":32,hummus:15,pasta:2.5,zucchini:.6,potatoes:2.5,"beef strips":42,"soy sauce":15,"coconut milk":12,salmon:55,"ground beef":32,"ribeye steak":55,butter:22,"chicken thighs":18,"lamb chops":48,orange:.3,steak:45,"sweet potato":4.5,"raw beef":40,"egg yolks":.25,"sushi-grade salmon":65,"raw beef sirloin":48,sardines:8};
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const TYPES=[["B","🌅","Breakfast"],["L","☀️","Lunch"],["D","🌙","Dinner"]];
+const SUG=["chicken","eggs","rice","salmon","avocado","pasta","beef","tofu"];
+const M=RAW.split("\n").map(l=>{const [t,n,g,al,c,ing]=l.split("|");const I=ing.split(";").map(s=>{const [name,q,u,k]=s.split(":");return{name,q:+q,u,k}});return{t,n,g,al:al?al.split(","):[],c:+c,ing:I,s:(n+" "+I.map(i=>i.name).join(" ")).toLowerCase()}});
+const $=id=>document.getElementById(id),rnd=a=>a[Math.floor(Math.random()*a.length)];
+let S={plan:[],o:null},diet="x",people=2,favs=[],theme="system";
+
+function tiles(){$("tiles").innerHTML=DIETS.map(([c,e,n,d])=>`<button class="tile ${c===diet?"on":""}" data-c="${c}"><span>${e}</span><b>${n}</b><small>${d}</small></button>`).join("")}
+$("tiles").onclick=e=>{const b=e.target.closest(".tile");if(b){diet=b.dataset.c;tiles()}};
+function renderFavs(){
+  $("favs").innerHTML=favs.map(f=>`<span class="chip fav">⭐ ${f} <button onclick="rmFav('${f}')" aria-label="Remove">✕</button></span>`).join("");
+  $("sugs").innerHTML=SUG.filter(s=>!favs.includes(s)).map(s=>`<button class="chip sug" onclick="addFav('${s}')">+ ${s}</button>`).join("");
+}
+function addFav(v){v.split(",").map(x=>x.trim().toLowerCase()).filter(x=>x&&!favs.includes(x)).forEach(x=>{if(favs.length<12)favs.push(x)});renderFavs()}
+function rmFav(f){favs=favs.filter(x=>x!==f);renderFavs()}
+$("favAdd").onclick=()=>{addFav($("favIn").value);$("favIn").value=""};
+$("favIn").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("favAdd").onclick()}});
+$("pm").onclick=()=>{people=Math.max(1,people-1);$("pc").textContent=people};
+$("pp").onclick=()=>{people=Math.min(10,people+1);$("pc").textContent=people};
+
+function pool(t,o){return M.filter(m=>m.t.includes(t)&&m.g.includes(o.diet)&&!m.al.some(a=>o.al.includes(a)))}
+const pu=i=>(PR[i.name]??0)/((i.u==="g"||i.u==="ml")?1000:1);
+const cpp=m=>m.ing.reduce((s,i)=>s+i.q*pu(i),0);
+const mc=m=>cpp(m)*S.o.people*FX[S.o.cur];
+const total=()=>S.plan.reduce((s,d)=>s+TYPES.reduce((x,[t])=>x+mc(d[t]),0),0);
+const fmt=n=>S.o.cur+" "+(n<100?n.toFixed(1):Math.round(n));
+
+function generate(){
+  const o={people,budget:+$("budget").value||0,cur:$("cur").value,diet,al:[...document.querySelectorAll("#al input:checked")].map(i=>i.value),favs};
+  S.o=o;M.forEach(m=>{m.fav=favs.some(f=>m.s.includes(f));m.c=cpp(m)});
+  const P={};let bad=null;
+  TYPES.forEach(([t,e,n])=>{P[t]=pool(t,o);if(!P[t].length)bad=n});
+  if(bad){alert("No "+bad.toLowerCase()+" options match this diet and these allergies yet. Try removing an allergy or changing diet.");return}
+  const use=new Map(),sc=m=>(use.get(m)||0)-(m.fav?1.5:0);
+  const pick=(list,cur)=>{let c=list.filter(m=>m!==cur);if(!c.length)c=list;const min=Math.min(...c.map(sc));const m=rnd(c.filter(x=>sc(x)===min));use.set(m,(use.get(m)||0)+1);return m};
+  S.plan=DAYS.map(()=>{const d={};TYPES.forEach(([t])=>d[t]=pick(P[t]));return d});
+  for(let i=0;i<60&&total()>o.budget;i++){
+    let best=null;
+    S.plan.forEach((d,di)=>TYPES.forEach(([t])=>{const ch=P[t].filter(m=>m.c<d[t].c);if(ch.length&&(!best||d[t].c>best.c))best={di,t,c:d[t].c,ch}}));
+    if(!best)break;S.plan[best.di][best.t]=pick(best.ch);
+  }
+  render();$("out").hidden=false;$("out").scrollIntoView({behavior:"smooth"});
+}
+function swap(di,t){
+  const cur=S.plan[di][t],c=pool(t,S.o).filter(m=>m!==cur);
+  if(c.length){S.plan[di][t]=rnd(c);render()}
+}
+function qty(q,u){
+  if(u==="g"||u==="ml")return q>=1000?(q/1000).toFixed(1).replace(".0","")+(u==="g"?" kg":" l"):Math.ceil(q/5)*5+" "+u;
+  return (Math.ceil(q*2)/2+" "+(u==="pcs"?"":u)).trim();
+}
+function render(){
+  const o=S.o,t=total(),over=Math.round(t*10)/10>o.budget,pct=o.budget?Math.min(100,t/o.budget*100):100;
+  const miss=o.favs.filter(f=>!M.some(m=>m.s.includes(f)));
+  $("sum").innerHTML=`<b style="font-size:1.1rem">Estimated cost: ${fmt(t)}</b> <span style="color:var(--muted)">of ${fmt(o.budget)} for ${o.people} ${o.people>1?"people":"person"}</span>
+  <div class="bar ${over?"over":""}"><i style="width:${pct}%"></i></div>
+  <span class="${over?"warn":""}">${over?"Over budget with these choices. Try a higher budget or fewer restrictions.":"You’re "+fmt(o.budget-t)+" under budget 🎉"}</span>
+  ${o.favs.length?`<p class="note">⭐ Meals with your favourites are marked and appear more often.${miss.length?" We don’t have meals with “"+miss.join("”, “")+"” yet.":""}</p>`:""}
+  ${o.diet==="r"?`<p class="note warn">Raw meat and fish carry food-safety risks. Use very fresh, trusted sources, and check with a doctor if you’re pregnant, elderly or have a weak immune system.</p>`:""}`;
+  $("days").innerHTML=S.plan.map((d,i)=>`<div class="card day"><h3>${DAYS[i]} <small>${fmt(TYPES.reduce((x,[k])=>x+mc(d[k]),0))}</small></h3>${TYPES.map(([k,e,n])=>`<div class="meal"><span class="e">${e}</span><div><small>${n}</small><b>${d[k].n}</b>${d[k].fav?" ⭐":""}</div><button class="swap" title="Swap meal" onclick="swap(${i},'${k}')">↻</button></div>`).join("")}</div>`).join("");
+  const agg={};
+  S.plan.forEach(d=>TYPES.forEach(([k])=>d[k].ing.forEach(g=>{const key=g.name+"|"+g.u;(agg[key]=agg[key]||{...g,q:0}).q+=g.q*o.people})));
+  const by={};Object.values(agg).forEach(g=>(by[g.k]=by[g.k]||[]).push(g));
+  $("groc").innerHTML=Object.keys(CATS).filter(k=>by[k]).map(k=>`<div class="cat"><h3>${CATS[k]}</h3>${by[k].sort((a,b)=>a.name.localeCompare(b.name)).map(g=>`<label class="item"><input type="checkbox"><span>${g.name[0].toUpperCase()+g.name.slice(1)} — ${qty(g.q,g.u)}</span></label>`).join("")}</div>`).join("");
+}
+function setTheme(t){
+  theme=t;
+  if(t==="system")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",t);
+  document.querySelectorAll("#seg button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  try{localStorage.setItem("pw-theme",t)}catch(e){}
+}
+$("gear").onclick=()=>$("settings").hidden=false;
+$("seg").onclick=e=>{if(e.target.dataset.t)setTheme(e.target.dataset.t)};
+$("settings").addEventListener("click",e=>{if(e.target.id==="settings")$("settings").hidden=true});
+$("gen").onclick=generate;
+let t0="system";try{t0=localStorage.getItem("pw-theme")||"system"}catch(e){}
+setTheme(t0);tiles();renderFavs();
+const UNIT={};M.forEach(m=>m.ing.forEach(i=>UNIT[i.name]=i.u==="g"?"kg":i.u==="ml"?"l":"each"));
+$("prList").innerHTML=Object.keys(UNIT).sort().map(n=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0"><span style="flex:1">${n[0].toUpperCase()+n.slice(1)} <small style="color:var(--muted)">/ ${UNIT[n]}</small></span><input class="t" style="width:90px" type="number" min="0" step="0.05" value="${PR[n]??0}" data-n="${n}"></div>`).join("");
+$("prList").oninput=e=>{const n=e.target.dataset.n;if(n)PR[n]=+e.target.value||0};
+$("prBtn").onclick=()=>$("prices").hidden=false;
+$("prices").addEventListener("click",e=>{if(e.target.id==="prices")$("prices").hidden=true});
+</script>
+</body></html>
